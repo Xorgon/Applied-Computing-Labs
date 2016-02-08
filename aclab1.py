@@ -22,8 +22,8 @@ def bezier(points):
         return out
 
     b_points = np.empty((0, 2))
-    for k in range(102):
-        b_points = np.append(b_points, np.array([b(k * 1.0 / 101)]), axis=0)
+    for t in np.linspace(0, 1, 101):
+        b_points = np.append(b_points, np.array([b(t)]), axis=0)
     return b_points
 
 
@@ -41,8 +41,8 @@ def rational_bezier(points, weights):
         return np.divide(numer, denom)
 
     bez = np.empty((0, 2))
-    for k in range(102):
-        bez = np.append(bez, np.array([b(k / 101.0)]), axis=0)
+    for t in np.linspace(0, 1, 101):
+        bez = np.append(bez, np.array([b(t)]), axis=0)
     pl.plot(p[:, 0], p[:, 1], 'ko')
     pl.plot(p[:, 0], p[:, 1], 'g')
     pl.plot(bez[:, 0], bez[:, 1], 'r')
