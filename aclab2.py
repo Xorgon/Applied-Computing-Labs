@@ -14,6 +14,12 @@ def serialize_array(array):
     return string
 
 
+def coeffs_from_polar(file_path):
+    polar = open(file_path + "polar.dat", "r")
+    values = polar.readlines()[12].split()
+    return (values[1], values[2])
+
+
 def bezier_spline_aerofoil(file_path):
     lower = np.array([[1.0, 0.0],
                       [0.5, 0.08],
@@ -50,6 +56,5 @@ def run_xfoil(file_path, xfoil_path):
               "quit\n"
     commands_in = open(file_path + "commands.in", "w")
     commands_in.write(command)
-    print(xfoil_path + "xfoil.exe" + " < " + file_path + "commands.in")
     os.system(xfoil_path + "xfoil.exe" + " < " + file_path + "commands.in")
-    return
+    return coeffs_from_polar(file_path)
