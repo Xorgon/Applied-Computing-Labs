@@ -1,6 +1,7 @@
 import aclab1 as lab1
 import numpy as np
 import matplotlib
+import os
 
 plot = matplotlib.pyplot.plot
 
@@ -32,3 +33,23 @@ def bezier_spline_aerofoil(file_path):
     aero_spline = np.concatenate((l_bez, u_bez))
     aerofoil_file = open(file_path + "aerofoil.dat", "w")
     aerofoil_file.write("MyFoil\n" + serialize_array(aero_spline).strip())
+
+
+def run_xfoil(file_path, xfoil_path):
+    command = "load " + file_path + "aerofoil.dat" + "\n" + \
+              "panel\n" + \
+              "oper\n" + \
+              "visc 1397535\n" + \
+              "M 0.1\n" + \
+              "type 1\n" + \
+              "pacc\n" + \
+              file_path + "polar.dat" + "\n\n" + \
+              "iter\n" + \
+              "5000\n" + \
+              "cl 1.2\n\n\n" + \
+              "quit\n"
+    commands_in = open(file_path + "commands.in", "w")
+    commands_in.write(command)
+    print(xfoil_path + "xfoil.exe" + " < " + file_path + "commands.in")
+    os.system(xfoil_path + "xfoil.exe" + " < " + file_path + "commands.in")
+    return
