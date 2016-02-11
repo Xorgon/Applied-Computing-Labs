@@ -1,9 +1,12 @@
 import aclab1 as lab1
 import numpy as np
-import matplotlib
+import matplotlib.pyplot as plt
 import os
 
-plot = matplotlib.pyplot.plot
+plot = plt.plot
+
+
+xfoil_path = "C:/Users/Elijah/Documents/XFoil/"
 
 
 def serialize_array(array):
@@ -57,4 +60,4 @@ def run_xfoil(file_path, xfoil_path):
     values = polar.readlines()[12].split()
     polar.close()
     os.remove(file_path + "polar.dat")
-    return values[1], values[2]
+    return float(values[2]), float(values[1])
