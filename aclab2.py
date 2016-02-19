@@ -13,7 +13,7 @@ def serialize_array(array):
     """ Returns a string with array values in columns """
     string = ""
     for val in array:
-        string += str(val[0]) + " " + str(val[1]) + "\n"
+        string += "%.18f %.18f\n" % (val[0], val[1])
     return string
 
 

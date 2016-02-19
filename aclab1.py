@@ -44,6 +44,6 @@ def rational_bezier(points, weights):
     for t in np.linspace(0, 1, 101):
         bez = np.append(bez, np.array([b(t)]), axis=0)
     pl.plot(points[:, 0], points[:, 1], 'ko')
-    pl.plot(points[:, 0], points[:, 1], 'g')
+    pl.plot(points[:, 0], points[:, 1], 'k')
     pl.plot(bez[:, 0], bez[:, 1], 'r')
     return bez

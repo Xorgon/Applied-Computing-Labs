@@ -27,7 +27,6 @@ def parametric_aerofoil(w, file_path):
     upper = np.concatenate(([connect], upper))
     l_bez = lab1.rational_bezier(lower, [1, 1, 1, 1])
     u_bez = lab1.rational_bezier(upper, [1, 1, w, 1])
-    u_bez = np.delete(u_bez, len(u_bez) - 1, axis=0)
     aero_spline = np.concatenate((l_bez, u_bez))
     aerofoil_file = open(file_path + "aerofoil.dat", "w")
     aerofoil_file.write("MyFoil\n" + serialize_array(aero_spline).strip())
@@ -45,15 +44,15 @@ def run_xfoil_wcl(w, cl, file_path, xfoil_path):
               file_path + "polar.dat" + "\n\n" + \
               "iter\n" + \
               "5000\n" + \
-              "cl" + str(cl) + "\n\n\n" + \
+              "cl " + str(cl) + "\n\n\n" + \
               "quit\n"
     commands_in = open(file_path + "commands.in", "w")
     commands_in.write(command)
     commands_in.close()
-    command = xfoil_path + "xfoil.exe" + " < " + file_path + "commands.in"
+    command = xfoil_path + "xfoil.exe < " + file_path + "commands.in"
     os.system(command)
     polar = open(file_path + "polar.dat", "r")
-    values = polar.readlines()[12].split()
+    values = polar.readlines()[-1].split()
     polar.close()
     os.remove(file_path + "polar.dat")
     return float(values[2]), float(values[1])
