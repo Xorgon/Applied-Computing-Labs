@@ -25,14 +25,18 @@ def parametric_aerofoil(w, file_path):
                      np.multiply(lower[n - 1], n / (m + n)))
     lower = np.concatenate((lower, [connect]))
     upper = np.concatenate(([connect], upper))
-    l_bez = lab1.rational_bezier(lower, [1, 1, 1, 1])
-    u_bez = lab1.rational_bezier(upper, [1, 1, w, 1])
+    if type(w) is float:
+        l_bez = lab1.rational_bezier(lower, [1, 1, 1, 1])
+        u_bez = lab1.rational_bezier(upper, [1, 1, w, 1])
+    else:
+        l_bez = lab1.rational_bezier(lower, [1, w[2], w[3], 1])
+        u_bez = lab1.rational_bezier(upper, [1, w[0], w[1], 1])
     aero_spline = np.concatenate((l_bez, u_bez))
     aerofoil_file = open(file_path + "aerofoil.dat", "w")
     aerofoil_file.write("MyFoil\n" + serialize_array(aero_spline).strip())
 
 
-def run_xfoil_wcl(w, cl, file_path, xfoil_path):
+def run_xfoil_wcl(w, cl, file_path, xfoil_path, mode="dl"):
     parametric_aerofoil(w, file_path)
     command = "load " + file_path + "aerofoil.dat" + "\n" + \
               "panel\n" + \
@@ -55,14 +59,30 @@ def run_xfoil_wcl(w, cl, file_path, xfoil_path):
     values = polar.readlines()[-1].split()
     polar.close()
     os.remove(file_path + "polar.dat")
-    return float(values[2]), float(values[1])
+    out = []
+    try:
+        if mode.count("d") > 0:
+            out.append(float(values[2]))
+        if mode.count("l") > 0:
+            out.append(float(values[1]))
+        if len(out) == 1:
+            return out[0]
+        else:
+            return tuple(out)
+    except ValueError:
+        return False
 
 
 def parameter_sweep(w_array, cl, file_path, xfoil_path):
     cd = []
     plt.figure(0)
     for w in w_array:
-        cd.append(run_xfoil_wcl(w, cl, file_path, xfoil_path)[0])
+        xfoil_out = run_xfoil_wcl(w, cl, file_path, xfoil_path)
+        if xfoil_out:
+            cd.append(xfoil_out[0])
+        else:
+            w_array = np.delete(w_array, w)
+            print("XFoil failed to solve at w=" + str(w))
     plt.figure(1)
     plot(w_array, cd, 'o')
     tools.mls_curve_fit(w_array, cd, np.linspace(1.15, 1.85, 101))
