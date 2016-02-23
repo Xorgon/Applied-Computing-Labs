@@ -13,6 +13,15 @@ xfoil_path = "C:/Users/Elijah/Documents/XFoil/"
 
 
 def parametric_aerofoil(w, file_path):
+    """
+    Generates and saves a parametric bezier spline aerofoil.
+
+    w -- weighting of points
+         If w is a float it is used as the weighting of point u(2)
+         If w is an array it must contain four values, used as weighitngs of
+         points u(1), u(2), l(1), l(2) respectively.
+    file_path -- path to write aerofoil.dat within
+    """
     lower = np.array([[1.0, 0.0],
                       [0.5, 0.08],
                       [0.0, -0.05]])
@@ -37,6 +46,20 @@ def parametric_aerofoil(w, file_path):
 
 
 def run_xfoil_wcl(w, cl, file_path, xfoil_path, mode="dl"):
+    """
+    Runs XFoil using predefined configuration and an aerofoil generated from
+    given values.
+
+    w -- weightings, see parametric_aerofoil for details.
+    cl -- target coefficient of lift for XFoil.
+    file_path -- path containing aerofoil.dat [NO SPACES ALLOWED]
+    xfoil_path -- path containing xfoil.exe
+    mode -- output mode, if mode contains d it returns the coefficient of drag,
+            if mode contains l it returns the coefficient of lift. If both it
+            returns a tuple of (cd, cl).
+
+    returns values from XFoil as per mode
+    """
     parametric_aerofoil(w, file_path)
     command = "load " + file_path + "aerofoil.dat" + "\n" + \
               "panel\n" + \
@@ -74,6 +97,16 @@ def run_xfoil_wcl(w, cl, file_path, xfoil_path, mode="dl"):
 
 
 def parameter_sweep(w_array, cl, file_path, xfoil_path):
+    """
+    Performs and graphs a parameter sweep of different weightings.
+
+    w_array -- an array of weightings, see parametric_aerofoil for details.
+    cl -- target coefficient of lift for XFoil
+    file_path -- path containing aerofoil.dat [NO SPACES ALLOWED]
+    xfoil_path -- path containing xfoil.exe
+
+    returns array of values for cd
+    """
     cd = []
     plt.figure(0)
     for w in w_array:

@@ -18,6 +18,7 @@ def serialize_array(array):
 
 
 def bezier_spline_aerofoil(file_path):
+    """ Generates and saves a bezier spline aerofoil with predefined values """
     lower = np.array([[1.0, 0.0],
                       [0.5, 0.08],
                       [0.0, -0.05]])
@@ -39,6 +40,14 @@ def bezier_spline_aerofoil(file_path):
 
 
 def run_xfoil(file_path, xfoil_path):
+    """
+    Runs XFoil using predefined configuration and aerofoil.dat
+
+    file_path -- path containing aerofoil.dat [NO SPACES ALLOWED]
+    xfoil_path -- path containing xfoil.exe
+
+    returns cd, cl
+    """
     command = "load " + file_path + "aerofoil.dat" + "\n" + \
               "panel\n" + \
               "oper\n" + \
