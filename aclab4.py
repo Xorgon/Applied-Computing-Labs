@@ -16,14 +16,15 @@ def one_dim_opt(cl, file_path, xfoil_path):
 
     returns output from minimize_scalar
     """
-    bs = [0.6, 0.9, 1.3]
+    bs = [0.6, 0.7, 1.1]
     opt_out = opt.minimize_scalar(lab3.run_xfoil_wcl,
-                                  args=(cl, file_path, xfoil_path, "d"),
+                                  args=(cl, file_path, xfoil_path, "d",
+                                        314852.8405, 0.03673229503),
                                   method="brent", bracket=bs)
     return opt_out
 
 
-def four_dim_opt(x0, weight_limits, cl, file_path, xfoil_path, step_size=0.1):
+def four_dim_opt(x0, weight_limits, cl, file_path, xfoil_path, step_size=1e-8):
     """
     Performs a four dimensional optimization using fmin_l_bfgs_b. This
     function optimizes for points u(1), u(2), l(1), l(2) between the defined
@@ -34,12 +35,13 @@ def four_dim_opt(x0, weight_limits, cl, file_path, xfoil_path, step_size=0.1):
     cl -- target coefficient of lift for XFoil
     file_path -- path containing aerofoil.dat [NO SPACES ALLOWED]
     xfoil_path -- path containing xfoil.exe
-    step_size -- the step size for the optimization, default=0.1
+    step_size -- the step size for the optimization, default=1e-8
 
     returns output from fmin_l_bfgs_b
     """
     opt_out = opt.fmin_l_bfgs_b(lab3.run_xfoil_wcl, x0,
-                                args=(cl, file_path, xfoil_path, "d"),
+                                args=(cl, file_path, xfoil_path, "d",
+                                      314852.8405, 0.03673229503),
                                 bounds=weight_limits, epsilon=step_size,
                                 approx_grad=True)
     return opt_out

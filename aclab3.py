@@ -34,18 +34,19 @@ def parametric_aerofoil(w, file_path):
                      np.multiply(lower[n - 1], n / (m + n)))
     lower = np.concatenate((lower, [connect]))
     upper = np.concatenate(([connect], upper))
-    if type(w) is float:
+    if type(w) is float or type(w) is np.float64:
         l_bez = lab1.rational_bezier(lower, [1, 1, 1, 1])
         u_bez = lab1.rational_bezier(upper, [1, 1, w, 1])
     else:
         l_bez = lab1.rational_bezier(lower, [1, w[2], w[3], 1])
         u_bez = lab1.rational_bezier(upper, [1, w[0], w[1], 1])
-    aero_spline = np.concatenate((l_bez, u_bez))
+    u_bez = np.delete(u_bez, 0, axis=0)
+    aero_spline = np.concatenate((l_bez, u_bez), axis=0)
     aerofoil_file = open(file_path + "aerofoil.dat", "w")
     aerofoil_file.write("MyFoil\n" + serialize_array(aero_spline).strip())
 
 
-def run_xfoil_wcl(w, cl, file_path, xfoil_path, mode="dl"):
+def run_xfoil_wcl(w, cl, file_path, xfoil_path, mode="dl", Re=1397535, M=0.1):
     """
     Runs XFoil using predefined configuration and an aerofoil generated from
     given values.
@@ -64,8 +65,8 @@ def run_xfoil_wcl(w, cl, file_path, xfoil_path, mode="dl"):
     command = "load " + file_path + "aerofoil.dat" + "\n" + \
               "panel\n" + \
               "oper\n" + \
-              "visc 1397535\n" + \
-              "M 0.1\n" + \
+              "visc " + str(Re) + "\n" + \
+              "M " + str(M) + "\n" + \
               "type 1\n" + \
               "pacc\n" + \
               file_path + "polar.dat" + "\n\n" + \
@@ -96,7 +97,7 @@ def run_xfoil_wcl(w, cl, file_path, xfoil_path, mode="dl"):
         return False
 
 
-def parameter_sweep(w_array, cl, file_path, xfoil_path):
+def parameter_sweep(w_array, cl, file_path, xfoil_path, Re=1397535, M=0.1):
     """
     Performs and graphs a parameter sweep of different weightings.
 
@@ -110,9 +111,9 @@ def parameter_sweep(w_array, cl, file_path, xfoil_path):
     cd = []
     plt.figure(0)
     for w in w_array:
-        xfoil_out = run_xfoil_wcl(w, cl, file_path, xfoil_path)
+        xfoil_out = run_xfoil_wcl(w, cl, file_path, xfoil_path, "d", Re, M)
         if xfoil_out:
-            cd.append(xfoil_out[0])
+            cd.append(xfoil_out)
         else:
             w_array = np.delete(w_array, w)
             print("XFoil failed to solve at w=" + str(w))
