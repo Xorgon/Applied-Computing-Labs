@@ -4,12 +4,10 @@ import aclab2 as lab2
 import numpy as np
 import matplotlib.pyplot as plt
 import os
+import myvars as v
 
 plot = plt.plot
 serialize_array = lab2.serialize_array
-
-
-xfoil_path = "C:/Users/Elijah/Documents/XFoil/"
 
 
 def parametric_aerofoil(w, file_path):
@@ -46,7 +44,7 @@ def parametric_aerofoil(w, file_path):
     aerofoil_file.write("MyFoil\n" + serialize_array(aero_spline).strip())
 
 
-def run_xfoil_wcl(w, cl, file_path, xfoil_path, mode="dl", Re=1397535, M=0.1):
+def run_xfoil_wcl(w, cl, file_path, xfoil_path, mode="dl", Re=v.Re, M=v.M):
     """
     Runs XFoil using predefined configuration and an aerofoil generated from
     given values.
@@ -77,7 +75,7 @@ def run_xfoil_wcl(w, cl, file_path, xfoil_path, mode="dl", Re=1397535, M=0.1):
     commands_in = open(file_path + "commands.in", "w")
     commands_in.write(command)
     commands_in.close()
-    command = xfoil_path + "xfoil.exe < " + file_path + "commands.in"
+    command = '"' + xfoil_path + 'xfoil.exe" < ' + file_path + "commands.in"
     os.system(command)
     polar = open(file_path + "polar.dat", "r")
     values = polar.readlines()[-1].split()
@@ -97,7 +95,7 @@ def run_xfoil_wcl(w, cl, file_path, xfoil_path, mode="dl", Re=1397535, M=0.1):
         return False
 
 
-def parameter_sweep(w_array, cl, file_path, xfoil_path, Re=1397535, M=0.1):
+def parameter_sweep(w_array, cl, file_path, xfoil_path, Re=v.Re, M=v.M):
     """
     Performs and graphs a parameter sweep of different weightings.
 

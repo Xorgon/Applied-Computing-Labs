@@ -1,8 +1,6 @@
 from scipy import optimize as opt
 import aclab3 as lab3
-
-
-xfoil_path = "C:/Users/Elijah/Documents/XFoil/"
+import myvars as v
 
 
 def one_dim_opt(cl, file_path, xfoil_path):
@@ -19,12 +17,13 @@ def one_dim_opt(cl, file_path, xfoil_path):
     bs = [0.6, 0.7, 1.1]
     opt_out = opt.minimize_scalar(lab3.run_xfoil_wcl,
                                   args=(cl, file_path, xfoil_path, "d",
-                                        314852.8405, 0.03673229503),
+                                        v.Re, v.M),
                                   method="brent", bracket=bs)
     return opt_out
 
 
-def four_dim_opt(x0, weight_limits, cl, file_path, xfoil_path, step_size=1e-8):
+def four_dim_opt(x0, weight_limits, cl, file_path, xfoil_path, step_size=0.8,
+                 gtol=1e-9):
     """
     Performs a four dimensional optimization using fmin_l_bfgs_b. This
     function optimizes for points u(1), u(2), l(1), l(2) between the defined
@@ -41,7 +40,7 @@ def four_dim_opt(x0, weight_limits, cl, file_path, xfoil_path, step_size=1e-8):
     """
     opt_out = opt.fmin_l_bfgs_b(lab3.run_xfoil_wcl, x0,
                                 args=(cl, file_path, xfoil_path, "d",
-                                      314852.8405, 0.03673229503),
+                                      v.Re, v.M),
                                 bounds=weight_limits, epsilon=step_size,
                                 approx_grad=True)
     return opt_out

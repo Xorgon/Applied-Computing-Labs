@@ -6,9 +6,6 @@ import os
 plot = plt.plot
 
 
-xfoil_path = "C:/Users/Elijah/Documents/XFoil/"
-
-
 def serialize_array(array):
     """ Returns a string with array values in columns """
     string = ""
@@ -63,7 +60,8 @@ def run_xfoil(file_path, xfoil_path):
     commands_in = open(file_path + "commands.in", "w")
     commands_in.write(command)
     commands_in.close()
-    command = xfoil_path + "xfoil.exe" + " < " + file_path + "commands.in"
+    command = '"' + xfoil_path + 'xfoil.exe"' + " < " + \
+              file_path + "commands.in"
     os.system(command)
     polar = open(file_path + "polar.dat", "r")
     values = polar.readlines()[12].split()
