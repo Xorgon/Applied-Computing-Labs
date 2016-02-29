@@ -1,4 +1,7 @@
+import numpy as np
+
 xfoil_path = "C:/Users/Elijah/Documents/XFoil/"
+w_array = np.linspace(0.6, 1.2, 11)
 a = 340.3  # Speed of sound
 v = 12.5  # Velocity
 M = v / a  # Mach number
